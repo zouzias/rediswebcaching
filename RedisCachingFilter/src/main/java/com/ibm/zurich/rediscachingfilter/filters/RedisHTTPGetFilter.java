@@ -5,12 +5,12 @@
  */
 package com.ibm.zurich.rediscachingfilter.filters;
 
+import com.ibm.zurich.rediscachingfilter.core.MultiWriteHttpServletResponse;
 import com.ibm.zurich.rediscachingfilter.redis.RedisConnector;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Enumeration;
 import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -19,6 +19,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpMethod;
 
 /**
@@ -26,6 +28,8 @@ import org.eclipse.jetty.http.HttpMethod;
  * @author azo
  */
 public class RedisHTTPGetFilter implements Filter {
+
+    private static final Logger logger = Logger.getLogger(RedisHTTPGetFilter.class);
 
     private static final boolean debug = true;
 
@@ -42,26 +46,11 @@ public class RedisHTTPGetFilter implements Filter {
 
     private void doBeforeProcessing(ServletRequest request, ServletResponse response)
             throws IOException, ServletException {
-        if (debug)
+        if (debug) {
             log("RedisHTTPGetFilter:DoBeforeProcessing");
+        }
 
         HttpServletRequest req = (HttpServletRequest) request;
-
-        // Write code here to process the request and/or response before
-        // the rest of the filter chain is invoked.
-        // For example, a logging filter might log items on the request object,
-        // such as the parameters.
-        /*
-         String value = RedisConnector.getKey(urlString);
-         if ( value == null){
-         URL url = new URL(urlString);
-                
-         InputStream is = url.openStream();
-         value = IOUtils.toString(is, "UTF-8");
-         RedisConnector.addKey(urlString, value, true);
-         }
-        
-         */
         StringBuilder builder = new StringBuilder();
 
         // If method is GET
@@ -78,68 +67,26 @@ public class RedisHTTPGetFilter implements Filter {
                 }
             }
 
-            hashURL = req.getRequestURI() + builder.toString();
+            hashURL = req.getRequestURL() + builder.toString();
+            logger.info("Request URL : " + hashURL);
             cachedContent = RedisConnector.getKey(hashURL);
 
         } else {
             hashURL = null;
+            cachedContent = null;
         }
-
-        /* 
-         if ( value == null){
-         URL url = new URL(urlString);
-                
-         InputStream is = url.openStream();
-         value = IOUtils.toString(is, "UTF-8");
-         }
-         */
-        for (Enumeration en = request.getParameterNames(); en.hasMoreElements();) {
-            String name = (String) en.nextElement();
-            String values[] = request.getParameterValues(name);
-            int n = values.length;
-            StringBuilder buf = new StringBuilder();
-            buf.append(name);
-            buf.append("=");
-            for (int i = 0; i < n; i++) {
-                buf.append(values[i]);
-                if (i < n - 1)
-                    buf.append(",");
-            }
-            log(buf.toString());
-        }
-
     }
 
     private void doAfterProcessing(ServletRequest request, ServletResponse response)
             throws IOException, ServletException {
-        if (debug)
+        if (debug) {
             log("RedisHTTPGetFilter:DoAfterProcessing");
-
-        boolean isJSON = response.getContentType().toLowerCase().contains("text");
-
-        if (hashURL != null && isJSON) {
-
-            RedisConnector.addKey(hashURL, response.getWriter().toString(), true);
-
         }
 
-	// Write code here to process the request and/or response after
-        // the rest of the filter chain is invoked.
-        // For example, a logging filter might log the attributes on the
-        // request object after the request has been processed. 
-	/*
-         for (Enumeration en = request.getAttributeNames(); en.hasMoreElements(); ) {
-         String name = (String)en.nextElement();
-         Object value = request.getAttribute(name);
-         log("attribute: " + name + "=" + value.toString());
-
-         }
-         */
-        // For example, a filter might append something to the response.
-	/*
-         PrintWriter respOut = new PrintWriter(response.getWriter());
-         respOut.println("<P><B>This has been appended by an intrusive filter.</B>");
-         */
+        if (hashURL != null) {
+            logger.info("Hashing URL " + hashURL);
+            RedisConnector.addKey(hashURL, response.toString(), true);
+        }
     }
 
     /**
@@ -156,42 +103,27 @@ public class RedisHTTPGetFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
 
-        if (debug)
+        if (debug) {
             log("RedisHTTPGetFilter:doFilter()");
+        }
 
         doBeforeProcessing(request, response);
 
+               
         if (cachedContent != null) {
-
-            response.getWriter().write(cachedContent);
-            return;
-
+            logger.info("Found cached element");
+            response.getOutputStream().print(cachedContent);
         } else {
+            logger.info("Cache miss! on hashURL " + hashURL);
 
-            Throwable problem = null;
-            try {
-                chain.doFilter(request, response);
-            } catch (Throwable t) {
-                // If an exception is thrown somewhere down the filter chain,
-                // we still want to execute our after processing, and then
-                // rethrow the problem after that.
-                problem = t;
-                t.printStackTrace();
-            }
+            chain.doFilter(request, response);
+            response.getOutputStream().print(response.toString());
 
-            // If there was a problem, we want to rethrow it if it is
-            // a known type, otherwise log it.
-            if (problem != null) {
-                if (problem instanceof ServletException)
-                    throw (ServletException) problem;
-                if (problem instanceof IOException)
-                    throw (IOException) problem;
-                sendProcessingError(problem, response);
-            }
+            //logger.info("\n\n\nResponse before doAfter\n" + response.toString());
+            doAfterProcessing(request, response);
+            //logger.info("\n\n\nResponse after doAfter\n" + response.toString());
         }
-
-        doAfterProcessing(request, response);
-
+        
     }
 
     /**
@@ -239,8 +171,9 @@ public class RedisHTTPGetFilter implements Filter {
      */
     @Override
     public String toString() {
-        if (filterConfig == null)
+        if (filterConfig == null) {
             return ("RedisHTTPGetFilter()");
+        }
         StringBuilder sb = new StringBuilder("RedisHTTPGetFilter(");
         sb.append(filterConfig);
         sb.append(")");
