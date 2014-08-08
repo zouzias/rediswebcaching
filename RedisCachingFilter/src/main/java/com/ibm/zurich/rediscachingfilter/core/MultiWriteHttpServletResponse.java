@@ -23,7 +23,6 @@ public class MultiWriteHttpServletResponse extends HttpServletResponseWrapper {
         super(httpServletResponse);
         buffer = new StringWriter();
     }
-
     
     @Override
     public String toString() {

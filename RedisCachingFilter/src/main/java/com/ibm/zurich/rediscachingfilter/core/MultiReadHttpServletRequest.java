@@ -17,10 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import org.apache.commons.io.IOUtils;
 
-/**
- *
- * @author azo
- */
 public class MultiReadHttpServletRequest extends HttpServletRequestWrapper {
 
     private final byte[] _body;

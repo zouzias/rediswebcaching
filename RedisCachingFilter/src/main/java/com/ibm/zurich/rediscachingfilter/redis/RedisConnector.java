@@ -11,12 +11,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-/**
- *
- * @author azo
- */
 public class RedisConnector {
-
     private static final Logger logger = Logger.getLogger(RedisConnector.class);
     private static JedisPool pool_ = null;
     private static final String redisHostname = "localhost";
@@ -155,5 +150,4 @@ public class RedisConnector {
         RedisConnector.getRedisConnection().returnResource(redis);
         return key_cnt;
     }
-
 }
