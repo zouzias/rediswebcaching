@@ -5,16 +5,21 @@
         <filter-class>com.ibm.zurich.rediscachingfilter.filters.RedisHTTPGetFilter</filter-class>
     </filter>
     <filter>
-        <filter-name>MultiReadWriteFilter</filter-name>
-        <filter-class>com.ibm.zurich.rediscachingfilter.filters.MultiReadWriteFilter</filter-class>
+        <filter-name>MultiWriteFilter</filter-name>
+        <filter-class>com.ibm.zurich.rediscachingfilter.filters.MultiWriteResponseFilter</filter-class>
     </filter>
+    <!-- This filter ensures that response.getWriter() can be called more than once! 
+         We need to call response.getWriter() in order to get the content and cache it on redis
+    -->
     <filter-mapping>
-        <filter-name>MultiReadWriteFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <filter-name>MultiWriteFilter</filter-name>
+        <url-pattern>/cached/*</url-pattern>
     </filter-mapping>
+    <!-- This filter caches all HTTP GET requests
+    -->
     <filter-mapping>
         <filter-name>RedisHTTPGetFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/cached/*</url-pattern>
     </filter-mapping>
     <servlet>
         <servlet-name>DummyServlet</servlet-name>
@@ -26,11 +31,11 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>DummyServlet</servlet-name>
-        <url-pattern>/DummyServlet</url-pattern>
+        <url-pattern>/cached/DummyServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>HelloServlet</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/cached/HelloServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

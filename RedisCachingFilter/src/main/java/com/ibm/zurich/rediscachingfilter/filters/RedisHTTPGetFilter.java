@@ -19,60 +19,60 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpMethod;
 
 public class RedisHTTPGetFilter implements Filter {
-
     private static final Logger logger = Logger.getLogger(RedisHTTPGetFilter.class);
-
-    private static final boolean debug = true;
-
-    // The filter configuration object we are associated with.  If
-    // this value is null, this filter instance is not currently
-    // configured. 
     private FilterConfig filterConfig = null;
 
+    // Get URL serves as hash value and cachedContent it's possible content.
     private String hashURL = null;
     private String cachedContent = null;
 
     public RedisHTTPGetFilter() {
     }
 
-    private void doBeforeProcessing(ServletRequest request, ServletResponse response)
-            throws IOException, ServletException {
-        if (debug) {
-            log("RedisHTTPGetFilter:DoBeforeProcessing");
-        }
-
-        HttpServletRequest req = (HttpServletRequest) request;
+    private String requestParamsToString(HttpServletRequest req) {
         StringBuilder builder = new StringBuilder();
 
-        // If method is GET
-        if (req.getMethod().compareTo(HttpMethod.GET.asString()) == 0) {
-
-            Map<String, String[]> params = req.getParameterMap();
-            for (String param : params.keySet()) {
-                for (String value : params.get(param)) {
-                    if (builder.length() == 0) {
-                        builder.append(param).append("=").append(value);
-                    } else {
-                        builder.append("&").append(param).append("=").append(value);
-                    }
+        Map<String, String[]> params = req.getParameterMap();
+        for (String param : params.keySet()) {
+            for (String value : params.get(param)) {
+                if (builder.length() == 0) {
+                    builder.append(param).append("=").append(value);
+                } else {
+                    builder.append("&").append(param).append("=").append(value);
                 }
             }
+        }
+        return builder.toString();
+    }
 
-            hashURL = req.getRequestURL() + builder.toString();
+    private void doBeforeProcessing(ServletRequest request)
+            throws IOException, ServletException {
+        logger.debug("RedisHTTPGetFilter:DoBeforeProcessing");
+
+        HttpServletRequest req = (HttpServletRequest) request;
+        hashURL = null;
+        cachedContent = null;
+        
+        // Cache only the GET method
+        if (req.getMethod().compareTo(HttpMethod.GET.asString()) == 0) {
+            hashURL = req.getRequestURL() + requestParamsToString(req);
             logger.info("Request URL : " + hashURL);
             cachedContent = RedisConnector.getKey(hashURL);
 
-        } else {
-            hashURL = null;
-            cachedContent = null;
-        }
+        } 
     }
-
-    private void doAfterProcessing(ServletRequest request, ServletResponse response)
+    
+    /**
+     * After processing the request, cache the content response.toString() with key hashURL.
+     * 
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws ServletException 
+     */
+    private void doAfterProcessing(ServletResponse response)
             throws IOException, ServletException {
-        if (debug) {
-            log("RedisHTTPGetFilter:DoAfterProcessing");
-        }
+        logger.debug("RedisHTTPGetFilter:DoAfterProcessing");
 
         if (hashURL != null) {
             logger.info("Hashing URL " + hashURL);
@@ -80,66 +80,35 @@ public class RedisHTTPGetFilter implements Filter {
         }
     }
 
-    /**
-     *
-     * @param request The servlet request we are processing
-     * @param response The servlet response we are creating
-     * @param chain The filter chain we are processing
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet error occurs
-     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
 
-        if (debug) {
-            log("RedisHTTPGetFilter:doFilter()");
-        }
+        logger.debug("RedisHTTPGetFilter:doFilter()");
 
-        doBeforeProcessing(request, response);
+        doBeforeProcessing(request);
 
-               
         if (cachedContent != null) {
-            logger.info("Found cached element");
+            logger.debug("Cached element hit!");
             response.getOutputStream().print(cachedContent);
         } else {
-            logger.info("Cache miss! on hashURL " + hashURL);
-
+            logger.debug("Cache miss! on hashURL " + hashURL);
             chain.doFilter(request, response);
             response.getOutputStream().print(response.toString());
-
-            //logger.info("\n\n\nResponse before doAfter\n" + response.toString());
-            doAfterProcessing(request, response);
-            //logger.info("\n\n\nResponse after doAfter\n" + response.toString());
+            doAfterProcessing(response);
         }
-        
     }
 
-    /**
-     * Destroy method for this filter
-     */
     @Override
     public void destroy() {
     }
 
-    /**
-     * Init method for this filter
-     *
-     * @param filterConfig
-     */
     @Override
     public void init(FilterConfig filterConfig) {
         this.filterConfig = filterConfig;
         if (filterConfig != null) {
-            if (debug) {
-                log("RedisHTTPGetFilter:Initializing filter");
-            }
+            logger.debug("RedisHTTPGetFilter:Initializing filter");
         }
-    }
-
-    public void log(String msg) {
-        filterConfig.getServletContext().log(msg);
     }
 }

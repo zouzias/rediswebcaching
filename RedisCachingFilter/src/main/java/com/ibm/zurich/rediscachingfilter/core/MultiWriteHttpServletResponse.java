@@ -11,10 +11,6 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-/**
- *
- * @author azo
- */
 public class MultiWriteHttpServletResponse extends HttpServletResponseWrapper {
 
     private final StringWriter buffer; // This can be used as an Writer  
