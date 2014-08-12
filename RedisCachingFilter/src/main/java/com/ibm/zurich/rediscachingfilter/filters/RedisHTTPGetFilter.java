@@ -16,15 +16,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.http.HttpMethod;
 
 public class RedisHTTPGetFilter implements Filter {
+
     private static final Logger logger = Logger.getLogger(RedisHTTPGetFilter.class);
     private FilterConfig filterConfig = null;
-
-    // Get URL serves as hash value and cachedContent it's possible content.
-    private String hashURL = null;
-    private String cachedContent = null;
 
     public RedisHTTPGetFilter() {
     }
@@ -45,41 +41,6 @@ public class RedisHTTPGetFilter implements Filter {
         return builder.toString();
     }
 
-    private void doBeforeProcessing(ServletRequest request)
-            throws IOException, ServletException {
-        logger.debug("RedisHTTPGetFilter:DoBeforeProcessing");
-
-        HttpServletRequest req = (HttpServletRequest) request;
-        hashURL = null;
-        cachedContent = null;
-        
-        // Cache only the GET method
-        if (req.getMethod().compareTo(HttpMethod.GET.asString()) == 0) {
-            hashURL = req.getRequestURL() + requestParamsToString(req);
-            logger.info("Request URL : " + hashURL);
-            cachedContent = RedisConnector.getKey(hashURL);
-
-        } 
-    }
-    
-    /**
-     * After processing the request, cache the content response.toString() with key hashURL.
-     * 
-     * @param request
-     * @param response
-     * @throws IOException
-     * @throws ServletException 
-     */
-    private void doAfterProcessing(ServletResponse response)
-            throws IOException, ServletException {
-        logger.debug("RedisHTTPGetFilter:DoAfterProcessing");
-
-        if (hashURL != null) {
-            logger.info("Hashing URL " + hashURL);
-            RedisConnector.addKey(hashURL, response.toString(), true);
-        }
-    }
-
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
@@ -87,7 +48,17 @@ public class RedisHTTPGetFilter implements Filter {
 
         logger.debug("RedisHTTPGetFilter:doFilter()");
 
-        doBeforeProcessing(request);
+        HttpServletRequest req = (HttpServletRequest) request;
+        String hashURL = null;
+        String cachedContent = null;
+
+        // Cache only the GET method
+        if (req.getMethod().compareTo("GET") == 0) {
+            hashURL = req.getRequestURL() + requestParamsToString(req);
+            logger.info("Request URL : " + hashURL);
+            cachedContent = RedisConnector.getKey(hashURL);
+
+        }
 
         if (cachedContent != null) {
             logger.debug("Cached element hit!");
@@ -96,7 +67,11 @@ public class RedisHTTPGetFilter implements Filter {
             logger.debug("Cache miss! on hashURL " + hashURL);
             chain.doFilter(request, response);
             response.getOutputStream().print(response.toString());
-            doAfterProcessing(response);
+
+            if (hashURL != null && response.toString() != null) {
+                logger.info("Hashing URL\n -->HASH: " + hashURL + "\n-->VALUE: " + response.toString());
+                RedisConnector.addKey(hashURL, response.toString(), true);
+            }
         }
     }
 
