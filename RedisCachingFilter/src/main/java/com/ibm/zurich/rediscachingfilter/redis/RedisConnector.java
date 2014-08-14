@@ -96,4 +96,20 @@ public class RedisConnector {
 
         return value;
     }
+    
+    public static boolean delKey(String key) {
+        long retValue = -1;
+        JedisPool pool = getRedisConnection();
+        if (pool == null) {
+            return false;
+        }
+
+        Jedis redis = RedisConnector.getResource();
+        if (redis != null) {
+            retValue = redis.del(key);
+            pool.returnResource(redis);
+        }
+
+        return (retValue == 0);
+    }
 }
