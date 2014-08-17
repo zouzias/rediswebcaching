@@ -22,20 +22,20 @@
         <url-pattern>/cached/*</url-pattern>
     </filter-mapping>
     <servlet>
-        <servlet-name>DummyServlet</servlet-name>
-        <servlet-class>com.ibm.zurich.rediscachingfilter.servlets.DummyServlet</servlet-class>
+        <servlet-name>CachedServlet</servlet-name>
+        <servlet-class>com.ibm.zurich.rediscachingfilter.servlets.CachedServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>HelloServlet</servlet-name>
-        <servlet-class>com.ibm.zurich.rediscachingfilter.servlets.HelloServlet</servlet-class>
+        <servlet-name>UncachedServlet</servlet-name>
+        <servlet-class>com.ibm.zurich.rediscachingfilter.servlets.UncachedServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>DummyServlet</servlet-name>
-        <url-pattern>/cached/DummyServlet</url-pattern>
+        <servlet-name>CachedServlet</servlet-name>
+        <url-pattern>/cached/CachedServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>HelloServlet</servlet-name>
-        <url-pattern>/cached/HelloServlet</url-pattern>
+        <servlet-name>UncachedServlet</servlet-name>
+        <url-pattern>/UncachedServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

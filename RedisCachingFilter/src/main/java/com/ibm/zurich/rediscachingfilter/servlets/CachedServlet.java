@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author azo
  */
-public class DummyServlet extends HttpServlet {
+public class CachedServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -31,16 +31,18 @@ public class DummyServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+
         PrintWriter out = response.getWriter();
         try {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet DummyServlet</title>");            
+            out.println("<title>Cached</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet DummyServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet CachedServlet at " + request.getContextPath() + "</h1>");
             out.println("session=" + request.getSession(true).getId());
             out.println("</body>");
             out.println("</html>");

@@ -5,9 +5,9 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Redis Filter Cacher</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <h1>Caching HTTP Get Request with Redis Server</h1>
     </body>
 </html>

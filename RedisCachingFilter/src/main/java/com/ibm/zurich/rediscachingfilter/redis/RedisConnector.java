@@ -11,7 +11,6 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 public class RedisConnector {
-
     private static final Logger logger = Logger.getLogger(RedisConnector.class);
     private static JedisPool pool_ = null;
     private static final String redisHostname = "localhost";
