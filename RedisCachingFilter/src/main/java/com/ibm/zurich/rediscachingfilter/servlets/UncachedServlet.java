@@ -13,9 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- *
- * @author azo
+/** 
+ *  An empty servlet
  */
 public class UncachedServlet extends HttpServlet {
 

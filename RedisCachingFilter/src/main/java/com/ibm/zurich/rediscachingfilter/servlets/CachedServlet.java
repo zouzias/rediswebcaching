@@ -14,8 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- * @author azo
+ *  A simple default servlet
  */
 public class CachedServlet extends HttpServlet {
 

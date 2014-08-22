@@ -55,9 +55,8 @@ public class RedisHTTPGetFilter implements Filter {
         // Cache only the GET method
         if (req.getMethod().compareTo("GET") == 0) {
             hashURL = req.getRequestURL() + requestParamsToString(req);
-            logger.info("Request URL : " + hashURL);
+            logger.debug("Request URL : " + hashURL);
             cachedContent = RedisConnector.getKey(hashURL);
-
         }
 
         if (cachedContent != null) {
@@ -69,7 +68,7 @@ public class RedisHTTPGetFilter implements Filter {
             response.getOutputStream().print(response.toString());
 
             if (hashURL != null && response.toString() != null) {
-                logger.info("Hashing URL\n -->HASH: " + hashURL + "\n-->VALUE: " + response.toString());
+                logger.debug("Hashing URL\n -->HASH: " + hashURL + "\n-->VALUE: " + response.toString());
                 RedisConnector.addKey(hashURL, response.toString(), true);
             }
         }

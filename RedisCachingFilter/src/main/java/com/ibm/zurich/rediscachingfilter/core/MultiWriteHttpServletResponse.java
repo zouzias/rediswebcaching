@@ -11,6 +11,11 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+/**
+ *  A wrapper over HttpServletResponse so that respose.getWriter() can be called twice (used in Filters)
+ * 
+ * @author azo
+ */
 public class MultiWriteHttpServletResponse extends HttpServletResponseWrapper {
 
     private final StringWriter buffer; // This can be used as an Writer  
