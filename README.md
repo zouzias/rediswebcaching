@@ -41,7 +41,7 @@ TODO
 
 ### License
 
-Apache Software License, version 2.0 (just like the projects it's based on)
+Apache Software License, version 2.0
 
 
 
