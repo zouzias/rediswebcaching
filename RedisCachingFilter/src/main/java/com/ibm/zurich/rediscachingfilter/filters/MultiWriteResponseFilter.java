@@ -16,7 +16,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-/** Filter that allows to call response.getWriter() twice or more. And also 
+/** Filter that allows to call response.getWriter() twice or more. 
  */
 public class MultiWriteResponseFilter implements Filter {
     private final FilterConfig filterConfig = null;
