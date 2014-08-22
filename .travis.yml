@@ -3,4 +3,4 @@ language: java
 services:
   - redis-server
 
-script: "./run-tests.sh"
+script: "./runTests.sh"
