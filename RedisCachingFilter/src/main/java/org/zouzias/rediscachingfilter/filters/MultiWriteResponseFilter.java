@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-package com.ibm.zurich.rediscachingfilter.filters;
+package org.zouzias.rediscachingfilter.filters;
 
-import com.ibm.zurich.rediscachingfilter.core.MultiWriteHttpServletResponse;
+import org.zouzias.rediscachingfilter.aux.MultiWriteHttpServletResponse;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;

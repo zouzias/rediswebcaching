@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ibm.zurich.rediscachingfilter.redis;
+package org.zouzias.rediscachingfilter.redis;
 
 import org.apache.log4j.Logger;
 import redis.clients.jedis.Jedis;

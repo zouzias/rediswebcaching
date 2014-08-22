@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ibm.zurich.rediscachingfilter.core;
+package org.zouzias.rediscachingfilter.aux;
 
 import java.io.IOException;
 import java.io.PrintWriter;

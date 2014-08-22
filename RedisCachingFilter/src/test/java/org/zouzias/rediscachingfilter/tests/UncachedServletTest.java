@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-package com.ibm.zurich.rediscachingfilter.redis.servlets;
+package org.zouzias.rediscachingfilter.tests;
 
-import com.ibm.zurich.rediscachingfilter.redis.RedisConnector;
+import org.zouzias.rediscachingfilter.redis.RedisConnector;
 import java.io.IOException;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;

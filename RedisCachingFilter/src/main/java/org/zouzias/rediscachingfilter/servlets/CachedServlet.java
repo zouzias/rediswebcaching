@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.ibm.zurich.rediscachingfilter.servlets;
+package org.zouzias.rediscachingfilter.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;

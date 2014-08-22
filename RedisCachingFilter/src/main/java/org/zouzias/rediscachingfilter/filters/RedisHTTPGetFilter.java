@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ibm.zurich.rediscachingfilter.filters;
+package org.zouzias.rediscachingfilter.filters;
 
-import com.ibm.zurich.rediscachingfilter.redis.RedisConnector;
+import org.zouzias.rediscachingfilter.redis.RedisConnector;
 import java.io.IOException;
 import java.util.Map;
 import javax.servlet.Filter;
