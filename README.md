@@ -1,7 +1,21 @@
-# Redis Web Caching <a href="https://travis-ci.org/zouzias/rediswebcaching.svg?branch=master"><img src="https://travis-ci.org/zouzias/rediswebcaching.svg?branch=master"/></a>
+# Redis Servlet Caching <a href="https://travis-ci.org/zouzias/rediswebcaching.svg?branch=master"><img src="https://travis-ci.org/zouzias/rediswebcaching.svg?branch=master"/></a>
 
-This project provides an implementation of a web caching mechanism of HTTP Get requests using Redis key-value store. It is based on Java EE and Servlet Filters.
+This project provides an implementation of a web caching mechanism of Java Servlets (HTTP Get requests) using Redis key-value store. The project is based on Java EE and Servlet Filters.
 
+### Usage
+
+Clone the project. Place your servlets into org.zouzias.rediscachingfilter.servlets. Adjust the web.xml file to point to the servlets whose content will be cached by redis, i.e. for a servlet named WannaBeCachedServlet.java add the following line in web.xml
+
+    <servlet>
+        <servlet-name>WannaBeCachedServlet</servlet-name>
+        <servlet-class>org.zouzias.rediscachingfilter.servlets.WannaBeCachedServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>WannaBeCachedServlet</servlet-name>
+        <url-pattern>/cached/WannaBeCachedServlet</url-pattern>
+    </servlet-mapping>
+
+See the file 'web.xml' that contains the servlets CachedServlet and UncachedServlet as an example of a cached and not-cached servlets, respectively.
 
 ### Introduction
 
