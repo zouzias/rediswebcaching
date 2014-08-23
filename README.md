@@ -1,6 +1,10 @@
 # Redis Servlet Caching <a href="https://travis-ci.org/zouzias/rediswebcaching.svg?branch=master"><img src="https://travis-ci.org/zouzias/rediswebcaching.svg?branch=master"/></a>
 
-This project provides an implementation of a web caching mechanism of Java Servlets (HTTP Get requests) using Redis key-value store. The project is based on Java EE and Servlet Filters.
+This project provides an implementation for caching HTTP GET requests that are handled by Java Servlets. 
+
+More precisely, this project provides an implementation of a web caching mechanism of Java Servlets (HTTP GET requests) using Redis key-value store (http://redis.io/) and Servlet Filters.
+
+Assuming that you have your custom servlet, to use this project, just follow the instructions in the Usage Section below.
 
 ### Usage
 
@@ -39,10 +43,7 @@ Check the traffic on redis. Open the terminal/console and type:
     redis-cli
     127.0.0.1:6379> MONITOR
 
-
-### Installation and Configuration
-  
-To install Redis, see http://redis.io/ for details depending on your system. We assume that redis runs on port 6379. See RedisConnector class for tweaks.
+Note: To install Redis, see http://redis.io/ for details depending on your system. We assume that redis runs on port 6379. See RedisConnector class for tweaks.
 
 ### How to include these files into your servlet container.
 
