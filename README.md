@@ -4,23 +4,6 @@ This project provides an implementation for caching HTTP GET requests that are h
 
 More precisely, this project provides an implementation of a web caching mechanism of Java Servlets (HTTP GET requests) using Redis key-value store (http://redis.io/) and Servlet Filters.
 
-Assuming that you have your custom servlet, to use this project, just follow the instructions in the Usage Section below.
-
-### Usage
-
-Clone the project. Place your servlets into org.zouzias.rediscachingfilter.servlets. Adjust the web.xml file to point to the servlets whose content will be cached by redis, i.e. for a servlet named WannaBeCachedServlet.java add the following line in web.xml
-
-    <servlet>
-        <servlet-name>WannaBeCachedServlet</servlet-name>
-        <servlet-class>org.zouzias.rediscachingfilter.servlets.WannaBeCachedServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>WannaBeCachedServlet</servlet-name>
-        <url-pattern>/cached/WannaBeCachedServlet</url-pattern>
-    </servlet-mapping>
-
-See the file 'web.xml' that contains the servlets CachedServlet and UncachedServlet as an example of a cached and not-cached servlets, respectively.
-
 ### Introduction
 
 To install, you'll need Git, Java (>= 7), Redis server (http://redis.io/) and Maven. Once those are installed and setup, you can download the code using Git:
@@ -45,9 +28,24 @@ Check the traffic on redis. Open the terminal/console and type:
 
 Note: To install Redis, see http://redis.io/ for details depending on your system. We assume that redis runs on port 6379. See RedisConnector class for tweaks.
 
+### Usage with custom servlets
+
+Clone the project. Place your servlets into org.zouzias.rediscachingfilter.servlets. Adjust the web.xml file to point to the servlets whose content will be cached by redis, i.e. for a servlet named WannaBeCachedServlet.java add the following line in web.xml
+
+    <servlet>
+        <servlet-name>WannaBeCachedServlet</servlet-name>
+        <servlet-class>org.zouzias.rediscachingfilter.servlets.WannaBeCachedServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>WannaBeCachedServlet</servlet-name>
+        <url-pattern>/cached/WannaBeCachedServlet</url-pattern>
+    </servlet-mapping>
+
+See the file 'web.xml' that contains the servlets CachedServlet and UncachedServlet as an example of a cached and not-cached servlets, respectively.
+
 ### How to include these files into your servlet container.
 
-TODO
+TODO (copy the classes contained in the core, filters and redis packages. Add the filter definitions into your web.xml)
 
 ### Run tests
 
