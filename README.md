@@ -4,13 +4,14 @@ This project provides an implementation for the following problem:
 
 <h5> Cache the content of custom HTTP GET requests that are handled by Java Servlets.</h5>
 
-This project uses the Redis key-value store (http://redis.io/) as its caching service and servlet Filters for agnostically implementing caching.
+The caching mechanism is based on the Redis key-value store (http://redis.io/). The caching mechanism is implemented via Servlet Filters so that adding or removing the caching functionality from any servlet can be done easily.
 
-The caching mechanism is implemented via Servlet Filters and therefore it is easy to add or remove the caching functionality from the servlet container.
 
-### Introduction
+### An illustrative example
 
-To install, you'll need Git, Java (>= 7), Redis server (http://redis.io/) and Maven. Once those are installed and setup, you can download the code using Git:
+The following example demonstrates a case of a cached servlet and an un-cached servlet respectively.
+
+To use this example, you'll need Git, Java (>= 7), Redis server (http://redis.io/) and Maven. Once those are installed and setup, you can download the code using Git:
 
     git clone https://github.com/zouzias/rediswebcaching.git
     cd rediswebcaching/RedisCachingFilter/
@@ -21,7 +22,7 @@ To start the jetty server with caching mechanism enabled on all /cached/* HTTP G
 
 The jetty server will run on port 9999.
 
-First, start the redis server, open the terminal/console and type:
+First, start the redis server (assume redis runs on localhost and port 6379), open the terminal/console and type:
 
     redis-server
     
@@ -37,6 +38,8 @@ Third, open your browser and type:
     http://localhost:9999/cached/CachedServlet
     
 Check the traffice on redis.
+
+See the `web.xml` file to understand the structure of the servlet container.
 
 Note: To install Redis, see http://redis.io/ for details depending on your system. We assume that redis runs on port 6379. See RedisConnector class for tweaks.
 
@@ -57,12 +60,16 @@ See the file 'web.xml' that contains the servlets CachedServlet and UncachedServ
 
 ### How to include these files into your servlet container.
 
-TODO (copy the classes contained in the core, filters and redis packages. Add the filter definitions into your web.xml)
+TODO: (1) copy the classes contained in the `org.zouzias.rediscachingfilter.core`, `org.zouzias.rediscachingfilter.filters` and `org.zouzias.rediscachingfilter.redis` packages. (2) Add the filter definitions into your `web.xml`
 
 ### Run tests
 
     cd RedisCachingFilter
     mvn compile war:war test
+    
+### Limitations
+
+* The caching mechanism only caches the content of the HTTP GET request (not the response type, etc)
 
 ### License
 
