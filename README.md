@@ -1,8 +1,12 @@
 # Redis Servlet Caching <a href="https://travis-ci.org/zouzias/rediswebcaching.svg?branch=master"><img src="https://travis-ci.org/zouzias/rediswebcaching.svg?branch=master"/></a>
 
-This project provides an implementation for caching HTTP GET requests that are handled by Java Servlets. 
+This project provides an implementation for the following problem:
 
-More precisely, this project provides an implementation of a web caching mechanism of Java Servlets (HTTP GET requests) using Redis key-value store (http://redis.io/) and Servlet Filters.
+<h5> Cache the content of custom HTTP GET requests that are handled by Java Servlets.</h5>
+
+This project uses the Redis key-value store (http://redis.io/) as its caching service and servlet Filters for agnostically implementing caching.
+
+The caching mechanism is implemented via Servlet Filters and therefore it is easy to add or remove the caching functionality from the servlet container.
 
 ### Introduction
 
@@ -15,22 +19,30 @@ To start the jetty server with caching mechanism enabled on all /cached/* HTTP G
 
     mvn compile jetty:run
 
-The jetty server will run on port 99999.
+The jetty server will run on port 9999.
 
-Open your browser and type:
+First, start the redis server, open the terminal/console and type:
 
-    http://localhost:9999/cached/CachedServlet
+    redis-server
     
-Check the traffic on redis. Open the terminal/console and type:
+Then, open another terminal/console and type:
 
     redis-cli
     127.0.0.1:6379> MONITOR
+    
+to start a monitoring session for Redis.
+
+Third, open your browser and type:
+
+    http://localhost:9999/cached/CachedServlet
+    
+Check the traffice on redis.
 
 Note: To install Redis, see http://redis.io/ for details depending on your system. We assume that redis runs on port 6379. See RedisConnector class for tweaks.
 
 ### Usage with custom servlets
 
-Clone the project. Place your servlets into org.zouzias.rediscachingfilter.servlets. Adjust the web.xml file to point to the servlets whose content will be cached by redis, i.e. for a servlet named WannaBeCachedServlet.java add the following line in web.xml
+Clone the project. Place your servlets into org.zouzias.rediscachingfilter.servlets. Adjust the web.xml file to point to the servlets whose content will be cached by redis, i.e. for a servlet named WannaBeCachedServlet.java add the following lines in web.xml
 
     <servlet>
         <servlet-name>WannaBeCachedServlet</servlet-name>
