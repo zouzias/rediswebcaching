@@ -16,7 +16,7 @@ public class RedisConnector {
     private static final String redisHostname = "localhost";
     private static final int redisPort = 6379;
 
-    public static JedisPool getRedisConnection() {
+    public static synchronized JedisPool getRedisConnection() {
         if (pool_ != null) {
             return pool_;
         }
