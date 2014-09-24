@@ -61,7 +61,7 @@ public class RedisHTTPGetFilter implements Filter {
 
         if (cachedContent != null) {
             logger.debug("Cached element hit!");
-            response.getOutputStream().print(cachedContent);
+            response.getOutputStream().write(cachedContent.getBytes("UTF-8"));
         } else {
             logger.debug("Cache miss! on hashURL " + hashURL);
             chain.doFilter(request, response);
