@@ -37,7 +37,7 @@ Third, open your browser and type:
 
     http://localhost:9999/cached/CachedServlet
     
-Check the traffice on redis.
+Check the traffic on redis.
 
 See the `web.xml` file to understand the structure of the servlet container.
 
@@ -60,7 +60,10 @@ See the file 'web.xml' that contains the servlets CachedServlet and UncachedServ
 
 ### How to include these files into your servlet container.
 
-TODO: (1) copy the classes contained in the `org.zouzias.rediscachingfilter.core`, `org.zouzias.rediscachingfilter.filters` and `org.zouzias.rediscachingfilter.redis` packages. (2) Add the filter definitions into your `web.xml`
+TODO list 
+
+* Copy the classes contained in the `org.zouzias.rediscachingfilter.core`, `org.zouzias.rediscachingfilter.filters` and `org.zouzias.rediscachingfilter.redis` packages. 
+* Add the filter definitions into your `web.xml`
 
 ### Run tests
 
