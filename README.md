@@ -6,6 +6,9 @@ This project provides an implementation for the following problem:
 
 The caching mechanism is based on the Redis key-value store (http://redis.io/). The caching mechanism is implemented via Servlet Filters so that adding or removing the caching functionality from any servlet can be done easily.
 
+The following figure gives a high-level description of the project's functionality.
+
+![overview](https://raw.github.com/zouzias/rediswebcaching/master/assets/overview.png)
 
 ### An illustrative example
 
