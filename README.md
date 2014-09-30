@@ -8,7 +8,9 @@ The caching mechanism is based on the Redis key-value store (http://redis.io/). 
 
 The following figure gives a high-level description of the project's functionality.
 
-![overview](https://raw.github.com/zouzias/rediswebcaching/master/assets/overview.png)
+<p align="center">
+  <img src="https://raw.github.com/zouzias/rediswebcaching/master/assets/overview.png" alt="Overview of project"/>
+</p>
 
 ### An illustrative example
 
