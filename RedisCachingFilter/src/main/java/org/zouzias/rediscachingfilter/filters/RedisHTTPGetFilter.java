@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.zouzias.rediscachingfilter.filters;
 
 import org.zouzias.rediscachingfilter.redis.RedisConnector;
@@ -15,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.HttpMethod;
 import org.apache.log4j.Logger;
 
 public class RedisHTTPGetFilter implements Filter {
@@ -52,8 +48,8 @@ public class RedisHTTPGetFilter implements Filter {
         String hashURL = null;
         String cachedContent = null;
 
-        // Cache only the GET method
-        if (req.getMethod().compareTo("GET") == 0) {
+        // Cache only HTTP GET method
+        if (req.getMethod().compareTo(HttpMethod.GET) == 0) {
             hashURL = req.getRequestURL() + requestParamsToString(req);
             logger.debug("Request URL : " + hashURL);
             cachedContent = RedisConnector.getKey(hashURL);

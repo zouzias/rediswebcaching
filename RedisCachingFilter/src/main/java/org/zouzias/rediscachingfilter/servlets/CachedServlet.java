@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.zouzias.rediscachingfilter.servlets;
 
 import java.io.IOException;
@@ -14,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *  A simple default servlet
+ *  A simple hello-world servlet
  */
 public class CachedServlet extends HttpServlet {
 

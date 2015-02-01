@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.zouzias.rediscachingfilter.aux;
 
 import java.io.IOException;
@@ -14,7 +9,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 /**
  *  A wrapper over HttpServletResponse so that respose.getWriter() can be called twice (used in Filters)
  * 
- * @author azo
+ * @author zouzias
  */
 public class MultiWriteHttpServletResponse extends HttpServletResponseWrapper {
 

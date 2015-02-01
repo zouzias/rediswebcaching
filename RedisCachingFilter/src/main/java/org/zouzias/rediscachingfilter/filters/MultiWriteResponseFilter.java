@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.zouzias.rediscachingfilter.filters;
 
 import org.zouzias.rediscachingfilter.aux.MultiWriteHttpServletResponse;
@@ -17,6 +11,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 /** Filter that allows to call response.getWriter() twice or more. 
+ * 
+ *  @author zouzias
  */
 public class MultiWriteResponseFilter implements Filter {
     private final FilterConfig filterConfig = null;
