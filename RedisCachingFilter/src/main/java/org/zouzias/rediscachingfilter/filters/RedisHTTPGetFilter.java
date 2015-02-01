@@ -11,6 +11,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.HttpMethod;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 public class RedisHTTPGetFilter implements Filter {
@@ -21,7 +23,12 @@ public class RedisHTTPGetFilter implements Filter {
     public RedisHTTPGetFilter() {
     }
 
-    private String requestParamsToString(HttpServletRequest req) {
+    /**
+     *
+     * @param req
+     * @return
+     */
+    private static String requestParamsToString(HttpServletRequest req) {
         StringBuilder builder = new StringBuilder();
 
         Map<String, String[]> params = req.getParameterMap();
@@ -37,6 +44,22 @@ public class RedisHTTPGetFilter implements Filter {
         return builder.toString();
     }
 
+    public static String stringifyHttpGetRequest(HttpServletRequest req) {
+        return req.getRequestURL() + requestParamsToString(req);
+    }
+
+    public static String stringifyHttpPostRequest(HttpServletRequest req) {
+        try {
+            String postTextContent = IOUtils.toString(req.getInputStream());
+            logger.info("HTTP Post content is " + postTextContent);
+            return req.getRequestURL() + ":" +DigestUtils.md5Hex(postTextContent);
+        } catch (IOException ex) {
+            logger.error("Could not read POST input stream or stream is not UTF-8", ex);
+        }
+
+        return null;
+    }
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
@@ -48,11 +71,17 @@ public class RedisHTTPGetFilter implements Filter {
         String hashURL = null;
         String cachedContent = null;
 
-        // Cache only HTTP GET method
+        // Cache HTTP GET method
         if (req.getMethod().compareTo(HttpMethod.GET) == 0) {
-            hashURL = req.getRequestURL() + requestParamsToString(req);
-            logger.debug("Request URL : " + hashURL);
+            hashURL = stringifyHttpGetRequest(req);
+            logger.debug("HTTP GET on [" + hashURL + "]");
             cachedContent = RedisConnector.getKey(hashURL);
+        } // Cache HTTP Post method 
+        else if (req.getMethod().compareTo(HttpMethod.POST) == 0) {
+            String hashedPOSTContent = stringifyHttpPostRequest(req);
+
+            // Check if the content is in Redis
+            cachedContent = RedisConnector.getKey(hashedPOSTContent);
         }
 
         if (cachedContent != null) {
