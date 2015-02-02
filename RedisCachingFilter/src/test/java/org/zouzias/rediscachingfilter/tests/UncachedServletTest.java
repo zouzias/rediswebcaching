@@ -7,6 +7,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
@@ -24,6 +26,7 @@ import org.xml.sax.SAXException;
  * @author zouzias
  */
 public class UncachedServletTest {
+
     private static final Logger logger = Logger.getLogger(UncachedServletTest.class);
 
     private Server server;
@@ -41,28 +44,27 @@ public class UncachedServletTest {
         WebAppContext webapp = new WebAppContext();
         webapp.setContextPath("/");
         webapp.setWar("target/RedisCachingFilter-1.0.war");
-        server.setHandler(webapp);        
+        server.setHandler(webapp);
 
         // Start things up! By using the server.join() the server thread will join with the current thread.
         // See "http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Thread.html#join()" for more details.
         server.start();
         //server.join();
     }
-    
+
     public UncachedServletTest() {
     }
-    
-    
-     @Test
+
+    @Test
     public void testUnCachedServlet() throws IOException {
 
-        String url = JETTY_URL + "/index.jsp";
+        String URL = JETTY_URL + "/UncachedServlet";
         String content = null;
 
         // Create an instance of HttpClient.
         HttpClient client = new HttpClient();
         // Create a method instance.
-        GetMethod method = new GetMethod(url);
+        GetMethod method = new GetMethod(URL);
 
         // Provide custom retry handler is necessary
         method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
@@ -76,13 +78,13 @@ public class UncachedServletTest {
 
             // Read the response body.
             byte[] responseBody = method.getResponseBody();
-            
-            assertNotSame("Content Char set is not UTF-8.","UTF-8",method.getResponseCharSet());
-            
-            String value = RedisConnector.getKey(url);
-            
-            assertNull("The key " + value + " is in redis cache. It should not be in cache.", value);
-            
+
+            assertNotSame("Content Char set is not UTF-8.", "UTF-8", method.getResponseCharSet());
+
+            String value = RedisConnector.getKey(URL);
+
+            assertNull("The key " + value + " is in redis cache. It should NOT be in redis-cache.", value);
+
             // Deal with the response.
             // Use caution: ensure correct character encoding and is not binary data
             content = new String(responseBody);
@@ -98,15 +100,64 @@ public class UncachedServletTest {
 
         assertNotNull("No response received", content);
     }
-    
-     @After
+
+    @Test
+    public void testUnCachedPOSTMethodServlet() throws IOException {
+
+        String URL = JETTY_URL + "/UncachedServlet";
+        String postContent = "Test uncached input string:timestamp:" + String.valueOf(System.currentTimeMillis());
+        String content = null;
+
+        // Create an instance of HttpClient.
+        HttpClient client = new HttpClient();
+        // Create a method instance.
+        PostMethod method = new PostMethod(URL);
+        // Add text POST content
+        method.setRequestEntity(new StringRequestEntity(postContent));
+
+        // Provide custom retry handler is necessary
+        method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
+                new DefaultHttpMethodRetryHandler(3, false));
+
+        try {
+            // Execute the method.
+            int statusCode = client.executeMethod(method);
+
+            assertNotSame("Method failed: " + method.getStatusLine(), statusCode, HttpStatus.SC_OK);
+
+            // Read the response body.
+            byte[] responseBody = method.getResponseBody();
+
+            assertNotSame("Content Char set is not UTF-8.", "UTF-8", method.getResponseCharSet());
+
+            String value = RedisConnector.getKey(URL);
+
+            assertNull("The key " + value + " is in redis cache. It should NOT be in redis-cache.", value);
+
+            // Deal with the response.
+            // Use caution: ensure correct character encoding and is not binary data
+            content = new String(responseBody);
+
+        } catch (HttpException e) {
+            logger.error("Fatal protocol violation: " + e.getMessage(), e);
+        } catch (IOException e) {
+            logger.error("Fatal transport error: " + e.getMessage(), e);
+        } finally {
+            // Release the connection.
+            method.releaseConnection();
+        }
+
+        assertNotNull("No response received", content);
+    }
+
+    @After
     public void tearDown() {
         try {
             server.stop();
             server.destroy();
         } catch (Exception ex) {
-            logger.error("Jetty server did not stopp successfully...",ex);
+            logger.error("Jetty server did not stopp successfully...", ex);
         }
     }
-    
+
 }
