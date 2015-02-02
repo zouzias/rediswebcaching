@@ -15,12 +15,12 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
-public class RedisHTTPGetFilter implements Filter {
+public class RedisHTTPFilter implements Filter {
 
-    private static final Logger logger = Logger.getLogger(RedisHTTPGetFilter.class);
+    private static final Logger logger = Logger.getLogger(RedisHTTPFilter.class);
     private FilterConfig filterConfig = null;
 
-    public RedisHTTPGetFilter() {
+    public RedisHTTPFilter() {
     }
 
     /**
@@ -44,15 +44,27 @@ public class RedisHTTPGetFilter implements Filter {
         return builder.toString();
     }
 
-    public static String stringifyHttpGetRequest(HttpServletRequest req) {
+    /**
+     * Given HTTP Get Request, compute its md5hex hash string
+     * 
+     * @param req
+     * @return 
+     */
+    private String stringifyHttpGetRequest(HttpServletRequest req) {
         return req.getRequestURL() + requestParamsToString(req);
     }
 
-    public static String stringifyHttpPostRequest(HttpServletRequest req) {
+    /**
+     *  Given HTTP Post Request, compute its md5 hex hash string
+     * 
+     * @param req
+     * @return 
+     */
+    private String stringifyHttpPostRequest(HttpServletRequest req) {
         try {
             String postTextContent = IOUtils.toString(req.getInputStream());
             logger.info("HTTP Post content is " + postTextContent);
-            return req.getRequestURL() + ":" +DigestUtils.md5Hex(postTextContent);
+            return req.getRequestURL() + requestParamsToString(req) + ":" + DigestUtils.md5Hex(postTextContent);
         } catch (IOException ex) {
             logger.error("Could not read POST input stream or stream is not UTF-8", ex);
         }
@@ -78,6 +90,8 @@ public class RedisHTTPGetFilter implements Filter {
             cachedContent = RedisConnector.getKey(hashURL);
         } // Cache HTTP Post method 
         else if (req.getMethod().compareTo(HttpMethod.POST) == 0) {
+            hashURL = stringifyHttpPostRequest(req);
+            logger.debug("HTTP POST on [" + req.getRequestURL() + "]");
             String hashedPOSTContent = stringifyHttpPostRequest(req);
 
             // Check if the content is in Redis
